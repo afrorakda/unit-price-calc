@@ -1,11 +1,15 @@
-# Unit Price Calc
+# Unit Price
+Stop guessing at the grocery store. Compare unit prices in 1 second.
 
-Stop second-guessing at the store. Compare value for money in seconds.
+## Philosophy
+* **1 Tool, 1 Action.**
+* **No Login / No Ads / No Tracking**
+* **Browser-only Privacy**
 
-### 🛠 Fridge Combo Standard
-* **Instant Winner**: Highlights the better deal as you type.
-* **Minimalist UI**: White background, black buttons, 15px rounded corners.
-* **Privacy First**: No login, No tracking, No ads.
+## How to Use
+1. Input price and quantity of Item A and B.
+2. See which one is the smarter deal.
 
 ---
-Unit Price Calc © 2026
+No login / No tracking / No ads / Browser only Privacy Policy  
+**afrorakda © 2026**
