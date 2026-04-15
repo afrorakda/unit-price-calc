@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Unit Price Calc</title>
@@ -11,48 +11,96 @@
     <link rel="apple-touch-icon" href="image_8.png">
 
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #fff; display: flex; justify-content: center; padding: 20px; margin: 0; color: #111; -webkit-font-smoothing: antialiased; }
-        .container { width: 100%; max-width: 380px; min-height: 95vh; display: flex; flex-direction: column; }
+        :root { --main: #333; --bg: #fff; --accent: #eee; --input-bg: #fafafa; --radius: 15px; }
         
-        h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.8px; margin: 25px 0 5px; }
-        .subtitle { font-size: 0.85rem; color: #666; margin-bottom: 25px; }
+        * { 
+            -webkit-touch-callout: none !important; 
+            -webkit-user-select: none !important; 
+            user-select: none !important; 
+            -webkit-tap-highlight-color: transparent;
+            touch-action: pan-y;
+        }
 
-        .card { background: #f9f9f9; padding: 20px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 15px; transition: 0.3s; position: relative; }
-        .card.winner { border: 2px solid #111; background: #fff; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--bg); display: flex; justify-content: center; 
+            padding: 0; margin: 0; color: var(--main); -webkit-font-smoothing: antialiased; 
+        }
+
+        .container { 
+            width: 100%; max-width: 380px; min-height: 100vh; 
+            display: flex; flex-direction: column; position: relative; 
+            padding: 20px; box-sizing: border-box; 
+        }
+        
+        .hub-link { 
+            text-decoration: none; font-size: 0.8rem; font-weight: 800; color: var(--main); 
+            background: var(--accent); padding: 8px 15px; border-radius: var(--radius); 
+            align-self: flex-start; margin-bottom: 15px; transition: 0.2s; cursor: pointer; 
+        }
+        .hub-link:active { transform: scale(0.95); }
+
+        header { margin-bottom: 20px; text-align: left; }
+        h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.8px; margin: 0 0 5px; }
+        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; }
+
+        .card { 
+            background: var(--input-bg); padding: 20px; border-radius: var(--radius); 
+            border: 2px solid var(--accent); margin-bottom: 15px; transition: 0.3s; position: relative; 
+        }
+        .card.winner { border: 2px solid var(--main); background: var(--bg); }
         .card-label { font-size: 0.75rem; font-weight: 800; color: #aaa; text-transform: uppercase; margin-bottom: 12px; display: block; }
         
-        .winner-tag { position: absolute; top: 15px; right: 15px; background: #111; color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 10px; display: none; }
+        .winner-tag { 
+            position: absolute; top: 15px; right: 15px; background: var(--main); color: #fff; 
+            font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 10px; display: none; 
+        }
         .card.winner .winner-tag { display: block; }
 
         .input-row { display: flex; gap: 10px; }
         .input-group { flex: 1; }
         .input-label { font-size: 10px; color: #888; margin-bottom: 4px; display: block; font-weight: 600; }
         
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; -webkit-appearance: none; font-weight: 600; }
-        input:focus { border-color: #111; }
+        input { 
+            width: 100%; padding: 14px; border: 1px solid var(--accent); border-radius: 12px; 
+            box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; 
+            font-weight: 600; background: #fff;
+            -webkit-appearance: none; -webkit-text-fill-color: var(--main); opacity: 1 !important;
+            user-select: auto !important; -webkit-user-select: auto !important; 
+        }
+        input:focus { border-color: var(--main); }
 
         .unit-price { margin-top: 12px; font-size: 13px; color: #666; font-weight: 500; }
-        .unit-price span { font-weight: 800; color: #111; font-size: 16px; }
+        .unit-price span { font-weight: 800; color: var(--main); font-size: 16px; font-variant-numeric: tabular-nums; }
 
-        .btn-clear { width: 100%; padding: 15px; background-color: #f0f0f0; color: #666; border: none; border-radius: 15px; font-size: 0.9rem; font-weight: 700; cursor: pointer; margin: 10px 0 30px; -webkit-appearance: none; }
+        .btn-clear { 
+            width: 100%; padding: 15px; background-color: var(--accent); color: #666; 
+            border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 700; 
+            cursor: pointer; margin-bottom: 20px; -webkit-appearance: none; 
+        }
         .btn-clear:active { transform: scale(0.96); opacity: 0.8; }
 
-        /* Fridge Combo Standard Footer */
-        footer { margin-top: auto; padding: 40px 0 20px; text-align: center; font-size: 13px; color: #666; border-top: 1px solid #f0f0f0; }
-        .kofi-btn { display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 15px; text-decoration: none; font-weight: bold; margin-bottom: 20px; transition: 0.2s; }
-        .install-btn { background: #f0f0f0; color: #111; border: none; padding: 8px 20px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 500; margin-bottom: 20px; }
-        .footer-line { line-height: 1.8; color: #999; }
+        footer { margin-top: auto; padding: 25px 0 30px; text-align: center; border-top: 1px solid #f5f5f5; font-size: 12px; color: #666; font-weight: 600; }
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .kofi-btn { background: var(--main); color: #fff; padding: 12px; border-radius: var(--radius); text-decoration: none; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+        .install-trigger { background: var(--accent); color: var(--main); border: none; padding: 12px; border-radius: var(--radius); font-weight: 800; font-size: 13px; cursor: pointer; width: 100%; }
+        .footer-info { line-height: 1.6; }
+        .footer-info a { color: inherit; text-decoration: underline; display: inline-block; padding: 5px; }
 
-        /* Unified Install Modal */
-        #install-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 85%; max-width: 300px; position: relative; text-align: center; }
-        .btn-close-modal { position: absolute; top: 15px; right: 15px; background:none; border:none; font-size:20px; color: #999; cursor: pointer; }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: #fff; width: 85%; max-width: 340px; padding: 30px; border-radius: var(--radius); position: relative; text-align: left; }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
+
 <div class="container">
-    <h1>Unit Price Calc</h1>
-    <p class="subtitle">Compare value for money instantly.</p>
+    <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
+
+    <header>
+        <h1>Unit Price Calc</h1>
+        <p class="subtitle">Compare value for money instantly.</p>
+    </header>
     
     <div id="card-a" class="card">
         <span class="card-label">Item A</span>
@@ -88,42 +136,26 @@
 
     <button class="btn-clear" onclick="clearAll()">Clear All</button>
     
-    <footer>
-        <a href="https://ko-fi.com/afrorakda" target="_blank" rel="noopener" class="kofi-btn">☕ Support me on Ko-fi</a>
-        <div>
-            <button class="install-btn" onclick="showInstall()">Add to Home Screen</button>
+    <footer id="dynamic-footer">
+        <div class="footer-btns">
+            <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn" id="kofi-link">☕️buy me a coffee</a>
+            <button class="install-trigger" onclick="showModal()" id="install-text">Add to Home Screen</button>
         </div>
-        <div class="footer-line">
-            <div>No login / No tracking / No ads / Browser only</div>
-            <div>Privacy Policy</div>
-            <div style="margin-top: 10px; font-weight: bold; color: #111;">Unit Price Calc © 2026</div>
+        <div class="footer-info">
+            No login / No tracking / No ads / Browser only<br>
+            <a href="https://afrorakda.com/privacy/" id="privacy-link">Privacy Policy</a><br>
+            <span id="copyright">Unit Price Calc © 2026</span>
         </div>
     </footer>
 </div>
 
-<div id="install-modal" onclick="hideInstall()">
+<div id="modal" onclick="hideModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="btn-close-modal" onclick="hideInstall()">✕</button>
-        <h2 style="font-size: 1.2rem; margin-top:0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            📱 Install
-        </h2>
-        <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Add to your home screen.</p>
-        <div style="text-align: left; font-size: 0.8rem; background: #f9f9f9; padding: 18px; border-radius: 12px;">
-            <div style="margin-bottom: 12px; display: flex; align-items: start; gap: 8px;">
-                <span>🍏</span>
-                <div>
-                    <strong>iPhone (Safari):</strong><br>
-                    Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.
-                </div>
-            </div>
-            <div style="display: flex; align-items: start; gap: 8px;">
-                <span>🤖</span>
-                <div>
-                    <strong>Android (Chrome):</strong><br>
-                    Tap <strong>Menu (⋮)</strong>, then <strong>Add to Home screen</strong>.
-                </div>
-            </div>
-        </div>
+        <span class="close-x" onclick="hideModal()">×</span>
+        <h3 id="modal-title" style="margin-top:0;">Install App</h3>
+        <p id="modal-msg" style="font-size:14px; font-weight:600;">Add to your home screen for easy access.</p>
+        <p id="modal-ios" style="font-size:13px; color:#666;">iOS: Tap Share then 'Add to Home Screen'.</p>
+        <p id="modal-android" style="font-size:13px; color:#666;">Android: Tap Menu then 'Add to Home screen'.</p>
     </div>
 </div>
 
@@ -163,8 +195,26 @@
         document.getElementById('amt-a').focus();
     }
 
-    function showInstall() { document.getElementById('install-modal').style.display = 'flex'; }
-    function hideInstall() { document.getElementById('install-modal').style.display = 'none'; }
+    function showModal() { document.getElementById('modal').style.display = 'flex'; }
+    function hideModal() { document.getElementById('modal').style.display = 'none'; }
+
+    async function loadFooter() {
+        try {
+            const response = await fetch('footer.json');
+            if (!response.ok) return;
+            const data = await response.json();
+            if(data.kofi) { document.getElementById('kofi-link').href = data.kofi.url; document.getElementById('kofi-link').textContent = data.kofi.text; }
+            if(data.install) {
+                document.getElementById('install-text').textContent = data.install.text;
+                document.getElementById('modal-title').textContent = data.install.title;
+                document.getElementById('modal-msg').textContent = data.install.msg;
+                document.getElementById('modal-ios').textContent = data.install.ios;
+                document.getElementById('modal-android').textContent = data.install.android;
+            }
+            if(data.privacy) document.getElementById('privacy-link').href = data.privacy.url;
+        } catch (e) { console.error("Footer update skipped."); }
+    }
+    window.addEventListener('DOMContentLoaded', loadFooter);
 </script>
 </body>
 </html>
