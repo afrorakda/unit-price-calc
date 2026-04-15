@@ -30,11 +30,10 @@
         .container { 
             width: 100%; max-width: 380px; min-height: 100vh; 
             display: flex; flex-direction: column; position: relative; 
-            padding: 15px 20px 100px; /* iPhone下部メニュー回避のため余白確保 */
+            padding: 15px 20px 100px; 
             box-sizing: border-box; 
         }
         
-        /* ヘッダー：横並び・高密度化 */
         header { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 10px; 
@@ -49,7 +48,6 @@
         }
         .hub-link:active { transform: scale(0.95); opacity: 1; }
 
-        /* カード：余白圧縮 */
         .card { 
             background: var(--input-bg); padding: 14px 16px; border-radius: var(--radius); 
             border: 2px solid var(--accent); margin-bottom: 8px; transition: 0.2s; position: relative; 
@@ -67,7 +65,6 @@
         .input-group { flex: 1; position: relative; }
         .input-label { font-size: 10px; color: #555; margin-bottom: 4px; display: block; font-weight: 700; }
         
-        /* 入力パレット：サイズ22px、極太800、純黒#000、フォーカス背景白 */
         input { 
             width: 100%; padding: 12px 32px 12px 12px; border: 2px solid var(--accent); border-radius: 12px; 
             box-sizing: border-box; font-size: 22px; outline: none; transition: 0.2s; 
@@ -76,10 +73,8 @@
             user-select: auto !important; -webkit-user-select: auto !important; 
         }
         input:focus { border-color: var(--main); background: #fff; }
-        /* 透かし文字色：#bbb（薄く） */
         input::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; font-weight: 600; font-size: 18px; }
 
-        /* クリアボタン：右端配置、入力時のみ表示 */
         .btn-clear-x { 
             position: absolute; right: 8px; bottom: 10px; 
             background: rgba(180,180,180,0.9); border: none; font-size: 13px; font-weight: bold; 
@@ -206,7 +201,6 @@
         const resA = document.getElementById('unit-a');
         const resB = document.getElementById('unit-b');
 
-        // 価格 ÷ 量 = 単価（1単位あたりのコスト）。数値が小さい方がおトク。
         let upA = (amtA > 0 && prcA > 0) ? (prcA / amtA) : null;
         let upB = (amtB > 0 && prcB > 0) ? (prcB / amtB) : null;
 
@@ -217,7 +211,6 @@
         cardB.classList.remove('winner');
 
         if (upA !== null && upB !== null) {
-            // 単価が安い方をWINNER判定
             if (upA < upB) {
                 cardA.classList.add('winner');
             } else if (upB < upA) {
