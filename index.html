@@ -45,7 +45,7 @@
         .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; }
 
         .card { 
-            background: var(--input-bg); padding: 20px; border-radius: var(--radius); 
+            background: var(--input-bg); padding: 22px; border-radius: var(--radius); 
             border: 2px solid var(--accent); margin-bottom: 15px; transition: 0.3s; position: relative; 
         }
         .card.winner { border: 2px solid var(--main); background: var(--bg); }
@@ -59,35 +59,33 @@
 
         .input-row { display: flex; gap: 10px; }
         .input-group { flex: 1; position: relative; }
-        .input-label { font-size: 10px; color: #888; margin-bottom: 4px; display: block; font-weight: 600; }
+        .input-label { font-size: 11px; color: #555; margin-bottom: 6px; display: block; font-weight: 700; }
         
-        /* 3. 入力文字色を濃く(#000)、サイズを大きく(18px) */
+        /* 入力パレット強化：サイズ拡大、極太フォント、純粋な黒 */
         input { 
-            width: 100%; padding: 14px 35px 14px 14px; border: 1px solid var(--accent); border-radius: 12px; 
-            box-sizing: border-box; font-size: 18px; outline: none; transition: 0.2s; 
+            width: 100%; padding: 16px 35px 16px 14px; border: 2px solid var(--accent); border-radius: 12px; 
+            box-sizing: border-box; font-size: 22px; outline: none; transition: 0.2s; 
             font-weight: 800; background: #fff;
             -webkit-appearance: none; -webkit-text-fill-color: #000; opacity: 1 !important;
             user-select: auto !important; -webkit-user-select: auto !important; 
         }
         input:focus { border-color: var(--main); }
-        /* 1. 透かし文字色を一段薄く(#bbb) */
-        input::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; font-weight: 600; }
+        input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; font-weight: 600; font-size: 18px; }
 
-        /* 2. 各窓にクリアボタン設置 */
         .btn-clear-x { 
-            position: absolute; right: 8px; bottom: 8px; 
-            background: rgba(180,180,180,0.8); border: none; font-size: 14px; font-weight: bold; 
-            color: white; cursor: pointer; display: none; width: 22px; height: 22px; 
-            border-radius: 50%; line-height: 22px; text-align: center; padding: 0; z-index: 5;
+            position: absolute; right: 8px; bottom: 12px; 
+            background: rgba(150,150,150,0.8); border: none; font-size: 14px; font-weight: bold; 
+            color: white; cursor: pointer; display: none; width: 24px; height: 24px; 
+            border-radius: 50%; line-height: 24px; text-align: center; padding: 0; z-index: 5;
         }
 
-        .unit-price { margin-top: 12px; font-size: 13px; color: #666; font-weight: 500; }
-        .unit-price span { font-weight: 800; color: var(--main); font-size: 16px; font-variant-numeric: tabular-nums; }
+        .unit-price { margin-top: 15px; font-size: 13px; color: #444; font-weight: 600; }
+        .unit-price span { font-weight: 900; color: #000; font-size: 18px; font-variant-numeric: tabular-nums; }
 
         .btn-clear-all { 
-            width: 100%; padding: 15px; background-color: var(--accent); color: #666; 
-            border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 700; 
-            cursor: pointer; margin-bottom: 20px; -webkit-appearance: none; 
+            width: 100%; padding: 18px; background-color: var(--accent); color: var(--main); 
+            border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 800; 
+            cursor: pointer; margin-bottom: 25px; -webkit-appearance: none; 
         }
         .btn-clear-all:active { transform: scale(0.96); opacity: 0.8; }
 
@@ -118,12 +116,12 @@
         <div class="winner-tag">WINNER 🏆</div>
         <div class="input-row">
             <div class="input-group">
-                <span class="input-label">AMOUNT (g/ml)</span>
+                <span class="input-label">AMOUNT</span>
                 <input type="number" id="amt-a" placeholder="500" oninput="handleIn(this)">
                 <button class="btn-clear-x" onclick="clIn('amt-a')">✕</button>
             </div>
             <div class="input-group">
-                <span class="input-label">PRICE ($)</span>
+                <span class="input-label">PRICE</span>
                 <input type="number" id="prc-a" placeholder="4.50" oninput="handleIn(this)">
                 <button class="btn-clear-x" onclick="clIn('prc-a')">✕</button>
             </div>
@@ -136,12 +134,12 @@
         <div class="winner-tag">WINNER 🏆</div>
         <div class="input-row">
             <div class="input-group">
-                <span class="input-label">AMOUNT (g/ml)</span>
+                <span class="input-label">AMOUNT</span>
                 <input type="number" id="amt-b" placeholder="750" oninput="handleIn(this)">
                 <button class="btn-clear-x" onclick="clIn('amt-b')">✕</button>
             </div>
             <div class="input-group">
-                <span class="input-label">PRICE ($)</span>
+                <span class="input-label">PRICE</span>
                 <input type="number" id="prc-b" placeholder="6.20" oninput="handleIn(this)">
                 <button class="btn-clear-x" onclick="clIn('prc-b')">✕</button>
             </div>
