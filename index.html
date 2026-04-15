@@ -1,255 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>Unit Price Calc</title>
+function calc() {
+    const amtA = parseFloat(document.getElementById('amt-a').value);
+    const prcA = parseFloat(document.getElementById('prc-a').value);
+    const amtB = parseFloat(document.getElementById('amt-b').value);
+    const prcB = parseFloat(document.getElementById('prc-b').value);
     
-    <link rel="icon" href="image_8.png">
-    <link rel="apple-touch-icon" href="image_8.png">
+    const cardA = document.getElementById('card-a');
+    const cardB = document.getElementById('card-b');
+    const resA = document.getElementById('unit-a');
+    const resB = document.getElementById('unit-b');
 
-    <style>
-        :root { --main: #333; --bg: #fff; --accent: #eee; --input-bg: #fafafa; --radius: 15px; }
-        
-        * { 
-            -webkit-touch-callout: none !important; 
-            -webkit-user-select: none !important; 
-            user-select: none !important; 
-            -webkit-tap-highlight-color: transparent;
-            touch-action: pan-y;
+    // 1単位あたりの価格を計算
+    let upA = (amtA > 0 && prcA > 0) ? (prcA / amtA) : null;
+    let upB = (amtB > 0 && prcB > 0) ? (prcB / amtB) : null;
+
+    // 表示（小数点第4位まで）
+    resA.innerText = upA !== null ? upA.toFixed(4) : "-";
+    resB.innerText = upB !== null ? upB.toFixed(4) : "-";
+
+    // 判定リセット
+    cardA.classList.remove('winner');
+    cardB.classList.remove('winner');
+
+    // 比較ロジック：数値が「小さい」方が WINNER
+    if (upA !== null && upB !== null) {
+        if (upA < upB) {
+            cardA.classList.add('winner');
+        } else if (upB < upA) {
+            cardB.classList.add('winner');
         }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg); display: flex; justify-content: center; 
-            padding: 0; margin: 0; color: var(--main); -webkit-font-smoothing: antialiased; 
-        }
-
-        .container { 
-            width: 100%; max-width: 380px; min-height: 100vh; 
-            display: flex; flex-direction: column; position: relative; 
-            padding: 15px 20px 80px; /* 下部に逃げを確保 */
-            box-sizing: border-box; 
-        }
-        
-        /* ヘッダー：タイトルとHubボタンを横並びに */
-        header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 12px; /* 余白を詰め */
-        }
-        .title-group h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.8px; margin: 0; }
-        .subtitle { font-size: 0.8rem; color: #666; font-weight: 500; margin-top: 2px; }
-
-        .hub-link { 
-            text-decoration: none; font-size: 0.75rem; font-weight: 800; color: var(--main); 
-            background: var(--accent); padding: 6px 12px; border-radius: var(--radius); 
-            transition: 0.2s; cursor: pointer; opacity: 0.8;
-        }
-        .hub-link:active { transform: scale(0.95); opacity: 1; }
-
-        /* カード：パディングを詰めて密度を上げる */
-        .card { 
-            background: var(--input-bg); padding: 16px; border-radius: var(--radius); 
-            border: 2px solid var(--accent); margin-bottom: 10px; transition: 0.2s; position: relative; 
-        }
-        .card.winner { border: 2px solid var(--main); background: var(--bg); }
-        .card-label { font-size: 0.7rem; font-weight: 800; color: #aaa; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        
-        .winner-tag { 
-            position: absolute; top: 12px; right: 12px; background: var(--main); color: #fff; 
-            font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 10px; display: none; 
-        }
-        .card.winner .winner-tag { display: block; }
-
-        .input-row { display: flex; gap: 8px; }
-        .input-group { flex: 1; position: relative; }
-        .input-label { font-size: 10px; color: #555; margin-bottom: 4px; display: block; font-weight: 700; }
-        
-        /* 入力強化：極太・高コントラスト・フォーカス時背景変化 */
-        input { 
-            width: 100%; padding: 14px 32px 14px 12px; border: 2px solid var(--accent); border-radius: 12px; 
-            box-sizing: border-box; font-size: 22px; outline: none; transition: 0.2s; 
-            font-weight: 800; background: #fff;
-            -webkit-appearance: none; -webkit-text-fill-color: #000; opacity: 1 !important;
-            user-select: auto !important; -webkit-user-select: auto !important; 
-        }
-        input:focus { border-color: var(--main); background: #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.05); }
-        input::placeholder { color: #ccc; -webkit-text-fill-color: #ccc; font-weight: 600; font-size: 18px; }
-
-        .btn-clear-x { 
-            position: absolute; right: 8px; bottom: 12px; 
-            background: rgba(180,180,180,0.9); border: none; font-size: 13px; font-weight: bold; 
-            color: white; cursor: pointer; display: none; width: 22px; height: 22px; 
-            border-radius: 50%; line-height: 22px; text-align: center; padding: 0; z-index: 5;
-        }
-
-        .unit-price { margin-top: 10px; font-size: 12px; color: #444; font-weight: 700; }
-        .unit-price span { font-weight: 900; color: #000; font-size: 18px; font-variant-numeric: tabular-nums; }
-
-        .btn-clear-all { 
-            width: 100%; padding: 16px; background-color: var(--accent); color: var(--main); 
-            border: none; border-radius: var(--radius); font-size: 0.95rem; font-weight: 800; 
-            cursor: pointer; margin-bottom: 20px; -webkit-appearance: none; 
-        }
-        .btn-clear-all:active { transform: scale(0.97); opacity: 0.8; }
-
-        /* フッター：余白を詰めて配置 */
-        footer { margin-top: auto; padding: 20px 0 20px; text-align: center; border-top: 1px solid #f5f5f5; font-size: 11px; color: #666; font-weight: 600; }
-        .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-        .kofi-btn { background: var(--main); color: #fff; padding: 12px; border-radius: var(--radius); text-decoration: none; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; }
-        .install-trigger { background: var(--accent); color: var(--main); border: none; padding: 12px; border-radius: var(--radius); font-weight: 800; font-size: 13px; cursor: pointer; width: 100%; }
-        .footer-info { line-height: 1.5; }
-        .footer-info a { color: inherit; text-decoration: underline; display: inline-block; padding: 4px; }
-
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: #fff; width: 85%; max-width: 340px; padding: 30px; border-radius: var(--radius); position: relative; text-align: left; }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
-    </style>
-</head>
-<body oncontextmenu="return false;">
-
-<div class="container">
-    <header>
-        <div class="title-group">
-            <h1>Unit Price Calc</h1>
-            <p class="subtitle">Compare value for money instantly.</p>
-        </div>
-        <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
-    </header>
-    
-    <div id="card-a" class="card">
-        <span class="card-label">Item A</span>
-        <div class="winner-tag">WINNER 🏆</div>
-        <div class="input-row">
-            <div class="input-group">
-                <span class="input-label">AMOUNT</span>
-                <input type="number" id="amt-a" placeholder="500" oninput="handleIn(this)">
-                <button class="btn-clear-x" onclick="clIn('amt-a')">✕</button>
-            </div>
-            <div class="input-group">
-                <span class="input-label">PRICE</span>
-                <input type="number" id="prc-a" placeholder="4.50" oninput="handleIn(this)">
-                <button class="btn-clear-x" onclick="clIn('prc-a')">✕</button>
-            </div>
-        </div>
-        <div class="unit-price">Unit price: <span id="unit-a">-</span></div>
-    </div>
-
-    <div id="card-b" class="card">
-        <span class="card-label">Item B</span>
-        <div class="winner-tag">WINNER 🏆</div>
-        <div class="input-row">
-            <div class="input-group">
-                <span class="input-label">AMOUNT</span>
-                <input type="number" id="amt-b" placeholder="750" oninput="handleIn(this)">
-                <button class="btn-clear-x" onclick="clIn('amt-b')">✕</button>
-            </div>
-            <div class="input-group">
-                <span class="input-label">PRICE</span>
-                <input type="number" id="prc-b" placeholder="6.20" oninput="handleIn(this)">
-                <button class="btn-clear-x" onclick="clIn('prc-b')">✕</button>
-            </div>
-        </div>
-        <div class="unit-price">Unit price: <span id="unit-b">-</span></div>
-    </div>
-
-    <button class="btn-clear-all" onclick="clearAll()">Clear All</button>
-    
-    <footer id="dynamic-footer">
-        <div class="footer-btns">
-            <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn" id="kofi-link">☕️buy me a coffee</a>
-            <button class="install-trigger" onclick="showModal()" id="install-text">Add to Home Screen</button>
-        </div>
-        <div class="footer-info">
-            No login / No tracking / No ads / Browser only<br>
-            <a href="https://afrorakda.com/privacy/" id="privacy-link">Privacy Policy</a><br>
-            <span id="copyright">Unit Price Calc © 2026</span>
-        </div>
-    </footer>
-</div>
-
-<div id="modal" onclick="hideModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close-x" onclick="hideModal()">×</span>
-        <h3 id="modal-title" style="margin-top:0;">Install App</h3>
-        <p id="modal-msg" style="font-size:14px; font-weight:600;">Add to your home screen for easy access.</p>
-        <p id="modal-ios" style="font-size:13px; color:#666;">iOS: Tap Share then 'Add to Home Screen'.</p>
-        <p id="modal-android" style="font-size:13px; color:#666;">Android: Tap Menu then 'Add to Home screen'.</p>
-    </div>
-</div>
-
-<script>
-    function handleIn(el) {
-        el.nextElementSibling.style.display = el.value ? 'block' : 'none';
-        calc();
+        // 同値の場合は両方 winner にしない、あるいは片方のみ等、運用に合わせる（現状は判定なし）
     }
-
-    function clIn(id) {
-        const el = document.getElementById(id);
-        el.value = '';
-        el.nextElementSibling.style.display = 'none';
-        calc();
-        el.focus();
-    }
-
-    function calc() {
-        const amtA = parseFloat(document.getElementById('amt-a').value);
-        const prcA = parseFloat(document.getElementById('prc-a').value);
-        const amtB = parseFloat(document.getElementById('amt-b').value);
-        const prcB = parseFloat(document.getElementById('prc-b').value);
-        
-        const cardA = document.getElementById('card-a');
-        const cardB = document.getElementById('card-b');
-        const resA = document.getElementById('unit-a');
-        const resB = document.getElementById('unit-b');
-
-        let upA = (amtA > 0 && prcA > 0) ? (prcA / amtA) : null;
-        let upB = (amtB > 0 && prcB > 0) ? (prcB / amtB) : null;
-
-        resA.innerText = upA ? upA.toFixed(4) : "-";
-        resB.innerText = upB ? upB.toFixed(4) : "-";
-
-        cardA.classList.remove('winner');
-        cardB.classList.remove('winner');
-
-        if (upA !== null && upB !== null) {
-            if (upA < upB) cardA.classList.add('winner');
-            else if (upB < upA) cardB.classList.add('winner');
-        }
-    }
-
-    function clearAll() {
-        ['amt-a', 'prc-a', 'amt-b', 'prc-b'].forEach(id => {
-            const el = document.getElementById(id);
-            el.value = '';
-            el.nextElementSibling.style.display = 'none';
-        });
-        calc();
-        document.getElementById('amt-a').focus();
-    }
-
-    function showModal() { document.getElementById('modal').style.display = 'flex'; }
-    function hideModal() { document.getElementById('modal').style.display = 'none'; }
-
-    async function loadFooter() {
-        try {
-            const response = await fetch('footer.json');
-            if (!response.ok) return;
-            const data = await response.json();
-            if(data.kofi) { document.getElementById('kofi-link').href = data.kofi.url; document.getElementById('kofi-link').textContent = data.kofi.text; }
-            if(data.install) {
-                document.getElementById('install-text').textContent = data.install.text;
-                document.getElementById('modal-title').textContent = data.install.title;
-                document.getElementById('modal-msg').textContent = data.install.msg;
-                document.getElementById('modal-ios').textContent = data.install.ios;
-                document.getElementById('modal-android').textContent = data.install.android;
-            }
-            if(data.privacy) document.getElementById('privacy-link').href = data.privacy.url;
-        } catch (e) { console.error("Footer update skipped."); }
-    }
-    window.addEventListener('DOMContentLoaded', loadFooter);
-</script>
-</body>
-</html>
+}
