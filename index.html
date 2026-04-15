@@ -58,27 +58,38 @@
         .card.winner .winner-tag { display: block; }
 
         .input-row { display: flex; gap: 10px; }
-        .input-group { flex: 1; }
+        .input-group { flex: 1; position: relative; }
         .input-label { font-size: 10px; color: #888; margin-bottom: 4px; display: block; font-weight: 600; }
         
+        /* 3. 入力文字色を濃く(#000)、サイズを大きく(18px) */
         input { 
-            width: 100%; padding: 14px; border: 1px solid var(--accent); border-radius: 12px; 
-            box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; 
-            font-weight: 600; background: #fff;
-            -webkit-appearance: none; -webkit-text-fill-color: var(--main); opacity: 1 !important;
+            width: 100%; padding: 14px 35px 14px 14px; border: 1px solid var(--accent); border-radius: 12px; 
+            box-sizing: border-box; font-size: 18px; outline: none; transition: 0.2s; 
+            font-weight: 800; background: #fff;
+            -webkit-appearance: none; -webkit-text-fill-color: #000; opacity: 1 !important;
             user-select: auto !important; -webkit-user-select: auto !important; 
         }
         input:focus { border-color: var(--main); }
+        /* 1. 透かし文字色を一段薄く(#bbb) */
+        input::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; font-weight: 600; }
+
+        /* 2. 各窓にクリアボタン設置 */
+        .btn-clear-x { 
+            position: absolute; right: 8px; bottom: 8px; 
+            background: rgba(180,180,180,0.8); border: none; font-size: 14px; font-weight: bold; 
+            color: white; cursor: pointer; display: none; width: 22px; height: 22px; 
+            border-radius: 50%; line-height: 22px; text-align: center; padding: 0; z-index: 5;
+        }
 
         .unit-price { margin-top: 12px; font-size: 13px; color: #666; font-weight: 500; }
         .unit-price span { font-weight: 800; color: var(--main); font-size: 16px; font-variant-numeric: tabular-nums; }
 
-        .btn-clear { 
+        .btn-clear-all { 
             width: 100%; padding: 15px; background-color: var(--accent); color: #666; 
             border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 700; 
             cursor: pointer; margin-bottom: 20px; -webkit-appearance: none; 
         }
-        .btn-clear:active { transform: scale(0.96); opacity: 0.8; }
+        .btn-clear-all:active { transform: scale(0.96); opacity: 0.8; }
 
         footer { margin-top: auto; padding: 25px 0 30px; text-align: center; border-top: 1px solid #f5f5f5; font-size: 12px; color: #666; font-weight: 600; }
         .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
@@ -108,11 +119,13 @@
         <div class="input-row">
             <div class="input-group">
                 <span class="input-label">AMOUNT (g/ml)</span>
-                <input type="number" id="amt-a" placeholder="e.g. 500" oninput="calc()">
+                <input type="number" id="amt-a" placeholder="500" oninput="handleIn(this)">
+                <button class="btn-clear-x" onclick="clIn('amt-a')">✕</button>
             </div>
             <div class="input-group">
                 <span class="input-label">PRICE ($)</span>
-                <input type="number" id="prc-a" placeholder="e.g. 4.50" oninput="calc()">
+                <input type="number" id="prc-a" placeholder="4.50" oninput="handleIn(this)">
+                <button class="btn-clear-x" onclick="clIn('prc-a')">✕</button>
             </div>
         </div>
         <div class="unit-price">Unit price: <span id="unit-a">-</span></div>
@@ -124,17 +137,19 @@
         <div class="input-row">
             <div class="input-group">
                 <span class="input-label">AMOUNT (g/ml)</span>
-                <input type="number" id="amt-b" placeholder="e.g. 750" oninput="calc()">
+                <input type="number" id="amt-b" placeholder="750" oninput="handleIn(this)">
+                <button class="btn-clear-x" onclick="clIn('amt-b')">✕</button>
             </div>
             <div class="input-group">
                 <span class="input-label">PRICE ($)</span>
-                <input type="number" id="prc-b" placeholder="e.g. 6.20" oninput="calc()">
+                <input type="number" id="prc-b" placeholder="6.20" oninput="handleIn(this)">
+                <button class="btn-clear-x" onclick="clIn('prc-b')">✕</button>
             </div>
         </div>
         <div class="unit-price">Unit price: <span id="unit-b">-</span></div>
     </div>
 
-    <button class="btn-clear" onclick="clearAll()">Clear All</button>
+    <button class="btn-clear-all" onclick="clearAll()">Clear All</button>
     
     <footer id="dynamic-footer">
         <div class="footer-btns">
@@ -160,6 +175,19 @@
 </div>
 
 <script>
+    function handleIn(el) {
+        el.nextElementSibling.style.display = el.value ? 'block' : 'none';
+        calc();
+    }
+
+    function clIn(id) {
+        const el = document.getElementById(id);
+        el.value = '';
+        el.nextElementSibling.style.display = 'none';
+        calc();
+        el.focus();
+    }
+
     function calc() {
         const amtA = parseFloat(document.getElementById('amt-a').value);
         const prcA = parseFloat(document.getElementById('prc-a').value);
@@ -187,10 +215,11 @@
     }
 
     function clearAll() {
-        document.getElementById('amt-a').value = '';
-        document.getElementById('prc-a').value = '';
-        document.getElementById('amt-b').value = '';
-        document.getElementById('prc-b').value = '';
+        ['amt-a', 'prc-a', 'amt-b', 'prc-b'].forEach(id => {
+            const el = document.getElementById(id);
+            el.value = '';
+            el.nextElementSibling.style.display = 'none';
+        });
         calc();
         document.getElementById('amt-a').focus();
     }
